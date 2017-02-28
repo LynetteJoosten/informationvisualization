@@ -24,6 +24,8 @@ var g = svg.append('g').attr('id', 'mapLayer')
     
 var currentYear = 2015
 var currentMonth = 3
+var showvar = 0;
+d3.select('#nMonth').style('opacity',0)
 
 d3.json('geojson/adamBuurtenExWater.geojson', function(error, mapData) {
     var features = mapData.features;
@@ -87,16 +89,35 @@ function isCorrectMonth(d) {
 }
 
 var data = data.filter(isCorrectYear);
+if (showvar == 1) {
 var data = data.filter(isCorrectMonth);
+d3.select('#month').text('Month: '+ String(currentMonth))
+}
 var total = 0;
 for (i = 0; i < data.length; i++) { 
 total=total+Number(data[i]['number_of_incidents'])
 g.selectAll('path').filter(' .n'+data[i]['code']).style('fill', d3.rgb(data[i]['number_of_incidents']*25,25,25))
 
 }
-d3.select('#month').text('Month: '+ String(currentMonth))
+
 d3.select('#year').text('Year: '+ String(currentYear))
 d3.select('h1').text('Total number of incidents: '+ String(total))
 });
 }
+
+function show(){
+	if (showvar ==0) {
+		
+	d3.select('#nMonth').style('opacity',1)
+	showvar++
+	}
+	else{
+	console.log('lol2');
+	d3.select('#month').text('')
+	d3.select('#nMonth').style('opacity',0)
+	showvar--
+	}
+	update()
+}
+d3.select("#myCheckbox").on("change",show);
 
