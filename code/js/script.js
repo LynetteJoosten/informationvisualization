@@ -1,5 +1,5 @@
-var width = 1000,
-    height = 650,
+var width = 1300,
+    height = 500,
 	centered,
 	div;
 
@@ -8,7 +8,7 @@ var svg = d3.select('#svgContainer').append('svg')
     .attr('height', height);
 
 var projection = d3.geoMercator()
-    .scale(140000)
+    .scale(110000)
     .center([4.909000, 52.355399])
     .translate([width / 2, height / 2]);
 
@@ -88,14 +88,15 @@ function isCorrectMonth(d) {
 
 var data = data.filter(isCorrectYear);
 var data = data.filter(isCorrectMonth);
-
+var total = 0;
 for (i = 0; i < data.length; i++) { 
-
-g.selectAll('path').filter(' .n'+data[i]['code']).style('fill', d3.rgb(255-data[i]['number_of_incidents']*25,0,25))
+total=total+Number(data[i]['number_of_incidents'])
+g.selectAll('path').filter(' .n'+data[i]['code']).style('fill', d3.rgb(data[i]['number_of_incidents']*25,25,25))
 
 }
 d3.select('#month').text('Month: '+ String(currentMonth))
 d3.select('#year').text('Year: '+ String(currentYear))
+d3.select('h1').text('Total number of incidents: '+ String(total))
 });
 }
 
