@@ -21,6 +21,7 @@ var svg = d3.select('svg')
 
 var g = svg.append('g').attr('id', 'mapLayer')
 
+    
 var currentYear = 2015
 var currentMonth = 3
 
@@ -57,12 +58,25 @@ d3.json('geojson/adamBuurtenExWater.geojson', function(error, mapData) {
 		});
 
 
-update()
+update(-10)
 
 });
 
 
-function update() {
+d3.select("#nYear").on("input", function() {
+  update(+this.value,'year');
+});
+d3.select("#nMonth").on("input", function() {
+  update(+this.value,'month');
+});
+
+function update(val,t) {
+	if (t =='year'){
+		currentYear = val
+	}
+	if (t =='month'){
+		currentMonth = val
+	}
 d3.csv("data/permonth.csv", function(data) {
 	
 function isCorrectYear(d) {
@@ -77,10 +91,11 @@ var data = data.filter(isCorrectMonth);
 
 for (i = 0; i < data.length; i++) { 
 
-g.selectAll('path').filter(' .n'+data[i]['code']).style('fill', d3.rgb(data[i]['number_of_incidents']*150,0,25))
+g.selectAll('path').filter(' .n'+data[i]['code']).style('fill', d3.rgb(data[i]['number_of_incidents']*100,0,25))
 
 }
-d3.select('h1').text(String(currentYear) + ' '+ String(currentMonth))
+d3.select('#month').text('Month: '+ String(currentMonth))
+d3.select('#year').text('Year: '+ String(currentYear))
 });
 }
 
