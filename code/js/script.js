@@ -91,7 +91,7 @@ var data = data.filter(isCorrectMonth);
 
 for (i = 0; i < data.length; i++) { 
 
-g.selectAll('path').filter(' .n'+data[i]['code']).style('fill', d3.rgb(data[i]['number_of_incidents']*100,0,25))
+g.selectAll('path').filter(' .n'+data[i]['code']).style('fill', d3.rgb(255-data[i]['number_of_incidents']*25,0,25))
 
 }
 d3.select('#month').text('Month: '+ String(currentMonth))
