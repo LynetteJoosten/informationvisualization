@@ -29,7 +29,7 @@ d3.select('#nMonth').style('opacity',0)
 
 d3.json('geojson/adamBuurtenExWater.geojson', function(error, mapData) {
     var features = mapData.features;
-	console.log(features)
+
   
     g.selectAll('path')
         .data(features)
@@ -49,6 +49,7 @@ d3.json('geojson/adamBuurtenExWater.geojson', function(error, mapData) {
 			div
 				.style('width', (document.getElementById('tooltip').clientWidth + 16) + 'px')
 				.style('height', (document.getElementById('tooltip').clientHeight) + 'px');
+
             })					
         .on('mouseout', function() {		
             div.remove();
@@ -80,7 +81,7 @@ function update(val,t) {
 		currentMonth = val
 	}
 d3.csv("data/permonth.csv", function(data) {
-	
+
 function isCorrectYear(d) {
   return d.year==String(currentYear); //year
 }
@@ -104,6 +105,22 @@ d3.select('#year').text('Year: '+ String(currentYear))
 d3.select('h1').text('Total number of incidents: '+ String(total))
 });
 }
+
+var groupBy = function(xs, key) {
+  return xs.reduce(function(rv, x) {
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
+};
+d3.csv("data/flatmetbuurten.csv", function(data) {
+	
+	for (i = 0; i < data.length; i++) { 
+	data[i]['year'] = data[i]['incident_timestamp'].split('/')[0]
+	data[i]['month'] = data[i]['incident_timestamp'].split('/')[1]
+	}
+	console.log(groupBy(data, 'neighborhood_id_ams'))
+})
+
 
 function show(){
 	if (showvar ==0) {
