@@ -1,7 +1,9 @@
 var width = 1000,
     height = 650,
 	centered,
-	div;
+	div,
+	clicked = false,
+	center = [4.909000, 52.355399];
 
 var svg = d3.select('#svgContainer').append('svg')
     .attr('width', width)
@@ -9,7 +11,7 @@ var svg = d3.select('#svgContainer').append('svg')
 
 var projection = d3.geoMercator()
     .scale(140000)
-    .center([4.909000, 52.355399])
+    .center(center)
     .translate([width / 2, height / 2]);
 
 var path = d3.geoPath()
@@ -43,6 +45,8 @@ d3.json('geojson/adamBuurtenExWater.geojson', function(error, mapData) {
 			div
 				.style('width', (document.getElementById('tooltip').clientWidth + 16) + 'px')
 				.style('height', (document.getElementById('tooltip').clientHeight) + 'px');
+				
+			d3.select(this).style('cursor', 'pointer');
             })					
         .on('mouseout', function() {		
             div.remove();
@@ -53,24 +57,129 @@ d3.json('geojson/adamBuurtenExWater.geojson', function(error, mapData) {
 				.style('top', (d3.event.pageY - 28) + 'px');
 		})
 		.on('click', function(d) {
-			zoomIn(d.properties.Buurt_code);
+			if (!clicked) {
+				zoomIn2(d.properties.Buurt_code);
+			}
+			clicked = true;
 		});
 });
 
 function zoomIn(code) {
-	d3.selectAll('.neighborhood').style('opacity', .1);
-	var nbh = d3.select('#' + code);
-	nbh.style('opacity', 1);
-	var centroid = getBoundingBoxCenter(nbh);
+	d3.selectAll('.neighborhood').transition().duration(800).style('opacity', 0);
 	
-	nbh.transition().duration(1200).attr('transform', 'translate(' + (500 - centroid[0]).toString() + ',' + (325 - centroid[1]).toString() + ')');
+	var newWidth = 500,
+		newHeight = 500,
+		mapSF = .6,
+		transDuration = 800;
 	
 	var nbh = d3.select('#' + code);
-	nbh.parentNode.appendChild(nbh);
+	var svg = d3.select('svg');
+	var element = nbh.node();
+	var bbox = element.getBBox();
+	var sf = 1 / d3.max([bbox.width, bbox.height]) * 400 * (1/mapSF) //scale factor
+	var centroid = [bbox.x*sf + bbox.width*sf/2, bbox.y*sf + bbox.height*sf/2]
+	
+	//nbh.node().parentNode.appendChild(nbh.node());
+	changeProjection(mapSF, transDuration);
+	
+	svg.transition().duration(transDuration)
+		.attr('width', newWidth)
+		.attr('height', newHeight);
+	
+	nbh.attr('transform-origin', 'center')
+		.style('opacity', 1)
+		.transition().duration(transDuration)
+		.attr('transform', 'translate(' + ((newWidth - 80) - centroid[0]).toString() + ',' + ((newHeight-120) - centroid[1]).toString() + ') scale(' + sf + ')');
+	
+	/*
+	svg.append('text')
+		.attr('x', 50).attr('y', 25)
+		.attr('id', 'zoomHeader')
+		.text(nbh.node().id)
+		.style('font-size', '0px')
+		.style('color', '#333');
+	svg.select('#zoomHeader').transition().duration(transDuration)
+		.style('font-size', '30px');
+	*/
+		
+	window.setTimeout(xButton ,transDuration);
+	
+	function xButton(){
+		d3.select('#svgContainer')
+			.append('div').html('&#10006;')
+			.style('float', 'right')
+			.style('font-size', '30px')
+			.on('mouseover', function() {
+				d3.select(this).style('cursor', 'pointer');
+			})
+			.on('click', function(){
+				nbh.attr('transform', 'none');
+				svg.transition().duration(transDuration)
+					.attr('width', width)
+					.attr('height', height);
+				/*svg.select('#zoomHeader').transition().duration(transDuration).attr('opacity', 0);
+				svg.select('#zoomHeader').remove();*/
+				d3.selectAll('.neighborhood').transition().duration(transDuration).style('opacity', 1);
+				
+				changeProjection(1, transDuration);
+				
+				this.remove();
+				clicked = false;
+			});
+	};
+	
+	function changeProjection(scale, transDuration) {
+		d3.select('#mapLayer').transition().duration(transDuration).attr('transform', 'scale(' + scale.toString() + ')')
+	};	
 };	
 
-function getBoundingBoxCenter (selection) {
-  var element = selection.node();
-  var bbox = element.getBBox();
-  return [bbox.x + bbox.width/2, bbox.y + bbox.height/2];
+function zoomIn2(code) {
+	d3.selectAll('.neighborhood').transition().duration(800).style('opacity', .1);
+	
+	var newWidth = 500,
+		newHeight = 500,
+		mapSF = .6,
+		transDuration = 800;
+	
+	var nbh = d3.select('#' + code);
+	var svg = d3.select('svg');
+	var element = nbh.node();
+	var bbox = element.getBBox();
+	var sf = 1 / d3.max([bbox.width, bbox.height]) * (150 * (1/mapSF)) //scale factor
+	var centroid = [bbox.x*sf + bbox.width*sf/2, bbox.y*sf + bbox.height*sf/2];
+	
+	//nbh.node().parentNode.appendChild(nbh.node());
+	
+	svg.transition().duration(transDuration)
+		.attr('width', newWidth)
+		.attr('height', newHeight);
+	
+	nbh.transition().duration(transDuration)
+		.style('opacity', 1)
+		
+	d3.select('#mapLayer').transition().duration(transDuration)//.attr('transform', 'scale(' + scale.toString() + ')')
+			.attr('transform', 'translate(' + (newWidth/2 - centroid[0]).toString() + ',' + (newHeight/2 - centroid[1]).toString() + ') scale(' + sf + ')');
+	
+	window.setTimeout(xButton ,transDuration);
+	
+	function xButton(){
+		d3.select('#svgContainer')
+			.append('div').html('&#10006;')
+			.style('float', 'right')
+			.style('font-size', '30px')
+			.on('mouseover', function() {
+				d3.select(this).style('cursor', 'pointer');
+			})
+			.on('click', function(){
+				svg.transition().duration(transDuration)
+					.attr('width', width)
+					.attr('height', height);
+				d3.selectAll('.neighborhood').transition().duration(transDuration)
+					.style('opacity', 1);
+				d3.select('#mapLayer').transition().duration(transDuration)
+					.attr('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+				this.remove();
+				clicked = false;
+			});
+	};
 };
