@@ -58,82 +58,13 @@ d3.json('geojson/adamBuurtenExWater.geojson', function(error, mapData) {
 		})
 		.on('click', function(d) {
 			if (!clicked) {
-				zoomIn2(d.properties.Buurt_code);
+				zoomIn(d.properties.Buurt_code);
 			}
 			clicked = true;
 		});
 });
 
 function zoomIn(code) {
-	d3.selectAll('.neighborhood').transition().duration(800).style('opacity', 0);
-	
-	var newWidth = 500,
-		newHeight = 500,
-		mapSF = .6,
-		transDuration = 800;
-	
-	var nbh = d3.select('#' + code);
-	var svg = d3.select('svg');
-	var element = nbh.node();
-	var bbox = element.getBBox();
-	var sf = 1 / d3.max([bbox.width, bbox.height]) * 400 * (1/mapSF) //scale factor
-	var centroid = [bbox.x*sf + bbox.width*sf/2, bbox.y*sf + bbox.height*sf/2]
-	
-	//nbh.node().parentNode.appendChild(nbh.node());
-	changeProjection(mapSF, transDuration);
-	
-	svg.transition().duration(transDuration)
-		.attr('width', newWidth)
-		.attr('height', newHeight);
-	
-	nbh.attr('transform-origin', 'center')
-		.style('opacity', 1)
-		.transition().duration(transDuration)
-		.attr('transform', 'translate(' + ((newWidth - 80) - centroid[0]).toString() + ',' + ((newHeight-120) - centroid[1]).toString() + ') scale(' + sf + ')');
-	
-	/*
-	svg.append('text')
-		.attr('x', 50).attr('y', 25)
-		.attr('id', 'zoomHeader')
-		.text(nbh.node().id)
-		.style('font-size', '0px')
-		.style('color', '#333');
-	svg.select('#zoomHeader').transition().duration(transDuration)
-		.style('font-size', '30px');
-	*/
-		
-	window.setTimeout(xButton ,transDuration);
-	
-	function xButton(){
-		d3.select('#svgContainer')
-			.append('div').html('&#10006;')
-			.style('float', 'right')
-			.style('font-size', '30px')
-			.on('mouseover', function() {
-				d3.select(this).style('cursor', 'pointer');
-			})
-			.on('click', function(){
-				nbh.attr('transform', 'none');
-				svg.transition().duration(transDuration)
-					.attr('width', width)
-					.attr('height', height);
-				/*svg.select('#zoomHeader').transition().duration(transDuration).attr('opacity', 0);
-				svg.select('#zoomHeader').remove();*/
-				d3.selectAll('.neighborhood').transition().duration(transDuration).style('opacity', 1);
-				
-				changeProjection(1, transDuration);
-				
-				this.remove();
-				clicked = false;
-			});
-	};
-	
-	function changeProjection(scale, transDuration) {
-		d3.select('#mapLayer').transition().duration(transDuration).attr('transform', 'scale(' + scale.toString() + ')')
-	};	
-};	
-
-function zoomIn2(code) {
 	d3.selectAll('.neighborhood').transition().duration(800).style('opacity', .1);
 	
 	var newWidth = 500,
