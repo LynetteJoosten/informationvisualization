@@ -73,7 +73,6 @@ function zoomIn(code) {
 		transDuration = 800;
 	
 	var nbh = d3.select('#' + code);
-	var svg = d3.select('svg');
 	var element = nbh.node();
 	var bbox = element.getBBox();
 	var sf = 1 / d3.max([bbox.width, bbox.height]) * (150 * (1/mapSF)) //scale factor
