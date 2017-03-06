@@ -25,7 +25,7 @@ var g = svg.append('g').attr('id', 'mapLayer')
 
 d3.json('geojson/adamBuurtenExWater.geojson', function(error, mapData) {
     var features = mapData.features;
-	console.log(features)
+	//console.log(features)
 	
     g.selectAll('path')
         .data(features)
