@@ -85,12 +85,12 @@ function zoomIn(code) {
 		.attr('height', newHeight);
 	
 	nbh.transition().duration(transDuration)
-		.style('opacity', 1)
+		.style('opacity', 1);
 		
-	d3.select('#mapLayer').transition().duration(transDuration)//.attr('transform', 'scale(' + scale.toString() + ')')
+	d3.select('#mapLayer').transition().duration(transDuration)
 			.attr('transform', 'translate(' + (newWidth/2 - centroid[0]).toString() + ',' + (newHeight/2 - centroid[1]).toString() + ') scale(' + sf + ')');
 	
-	window.setTimeout(xButton ,transDuration);
+	window.setTimeout(xButton, transDuration);
 	
 	function xButton(){
 		d3.select('#svgContainer')

@@ -12,18 +12,21 @@ var slide = d3.select('svg').append('line')
 var overlay = d3.select('#overlay').append('svg')
 	.attr('width', '100%')
 	.attr('height', '100%')
-	.style('position', 'absolute')
+	.style('position', 'fixed')
 	.style('top', 0)
-	.style('left', 0)
-	.style('pointer-events', 'none');
+	.style('left', 0);
 	
 var rect = overlay.append('rect')
 	.attr('height', '100%')
-	.attr('width', '0%')
+	.attr('width', '100%')
 	.attr('fill', '#003366')
-	.attr('opacity', 0.7);
+	.attr('opacity', 0);
 
-
+d3.select('.page-header').style('border-bottom', 'none')
+var colorScale = d3.scaleQuantize().domain([0,1])
+      //.interpolate(d3.interpolateRgb)
+      .range([d3.rgb("#333"), d3.rgb('#FFF')]);
+	
 var twelveH = 12 * 60 * 60 * 1000;
 var initDate = new Date('jan 1 1970 08:00:00');
 
@@ -34,12 +37,15 @@ var timeDisplay = d3.select('.page-header')
 	
 var xPos;
 var drag = d3.drag()
-	.on('drag', function(d,i) {
+	.on('drag', function() {
 		xPos = d3.mouse(this)[0];
 		if (xPos >= 0 && xPos <= width) {
 			d3.select(this).attr('x1', xPos).attr('x2', xPos);
 			var perc = xPos/width;
-			rect.attr('width', (perc*100).toString() + '%');
+			rect.attr('opacity', perc);
+			
+			d3.select('.page-header')
+				.style('color', colorScale(perc));
 			
 			var updateDate = new Date(initDate.valueOf() + perc * twelveH)
 			timeDisplay.html(updateDate.getHours().toString() + ':00 - ' + new Date(updateDate.valueOf() + twelveH).getHours().toString() + ':00');
