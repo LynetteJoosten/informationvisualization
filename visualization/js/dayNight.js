@@ -27,13 +27,13 @@ var colorScale = d3.scaleQuantize().domain([0,1])
       //.interpolate(d3.interpolateRgb)
       .range([d3.rgb("#333"), d3.rgb('#FFF')]);
 	
-var twelveH = 12 * 60 * 60 * 1000;
-var initDate = new Date('jan 1 1970 08:00:00');
+var h24 = 24 * 60 * 60 * 1000;
+var initDate = new Date('jan 1 1970 06:00:00');
 
 var timeDisplay = d3.select('.page-header')
 	.append('span')
 	.style('float', 'right')
-	.html(initDate.getHours().toString() + ':00 - ' + new Date(initDate.valueOf() + twelveH).getHours().toString() + ':00');
+	.html(initDate.getHours().toString() + ':00'); //- ' + new Date(initDate.valueOf() + h24/12).getHours().toString() + ':00');
 	
 var xPos;
 var drag = d3.drag()
@@ -47,8 +47,8 @@ var drag = d3.drag()
 			d3.select('.page-header')
 				.style('color', colorScale(perc));
 			
-			var updateDate = new Date(initDate.valueOf() + perc * twelveH)
-			timeDisplay.html(updateDate.getHours().toString() + ':00 - ' + new Date(updateDate.valueOf() + twelveH).getHours().toString() + ':00');
+			var updateDate = new Date(initDate.valueOf() + perc * h24)
+			timeDisplay.html(updateDate.getHours().toString() + ':00'); //- ' + new Date(updateDate.valueOf() + h24/12).getHours().toString() + ':00');
 		}
 	});
 	

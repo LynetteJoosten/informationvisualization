@@ -1,16 +1,20 @@
+var winHeight = window.innerHeight;
+
 var width = 1000,
-    height = 650,
+    height = winHeight * 0.6,
 	centered,
 	div,
 	clicked = false,
 	center = [4.909000, 52.355399];
 
+var scale = height * 227;
+	
 var svg = d3.select('#svgContainer').append('svg')
     .attr('width', width)
     .attr('height', height);
 
 var projection = d3.geoMercator()
-    .scale(140000)
+    .scale(scale)
     .center(center)
     .translate([width / 2, height / 2]);
 
@@ -67,8 +71,8 @@ d3.json('geojson/adamBuurtenExWater.geojson', function(error, mapData) {
 function zoomIn(code) {
 	d3.selectAll('.neighborhood').transition().duration(800).style('opacity', .1);
 	
-	var newWidth = 500,
-		newHeight = 500,
+	var newWidth = height,
+		newHeight = height,
 		mapSF = .6,
 		transDuration = 800;
 	
