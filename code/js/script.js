@@ -60,81 +60,60 @@ d3.json('geojson/adamBuurtenExWater.geojson', function(error, mapData) {
 				.style('top', (d3.event.pageY - 28) + 'px');
 		});
 
-
-update(-10)
-
 });
 
 
-d3.select("#nYear").on("input", function() {
-  update(+this.value,'year');
-});
-d3.select("#nMonth").on("input", function() {
-  update(+this.value,'month');
-});
 
-function update(val,t) {
-	if (t =='year'){
-		currentYear = val
-	}
-	if (t =='month'){
-		currentMonth = val
-	}
-d3.csv("data/permonth.csv", function(data) {
-
+update(2015,2,'Dienstverlening',1)
 function isCorrectYear(d) {
   return d.year==String(currentYear); //year
 }
 function isCorrectMonth(d) {
   return d.month==currentMonth; //month
 }
-
-var data = data.filter(isCorrectYear);
-if (showvar == 1) {
-var data = data.filter(isCorrectMonth);
-d3.select('#month').text('Month: '+ String(currentMonth))
+function isCorrectCategory(d) {
+  return d.incident_category==currentCat; 
 }
-var total = 0;
-for (i = 0; i < data.length; i++) { 
-total=total+Number(data[i]['number_of_incidents'])
-g.selectAll('path').filter(' .n'+data[i]['code']).style('fill', d3.rgb(data[i]['number_of_incidents']*25,25,25))
-
+function isCorrectPrio(d){
+	return d.incident_prio==currentPrio;
 }
-
-d3.select('#year').text('Year: '+ String(currentYear))
-d3.select('h1').text('Total number of incidents: '+ String(total))
-});
-}
-
-var groupBy = function(xs, key) {
-  return xs.reduce(function(rv, x) {
-    (rv[x[key]] = rv[x[key]] || []).push(x);
-    return rv;
-  }, {});
-};
+function update(currentYear,currentMonth,currentCat,currentPrio) {
 d3.csv("data/flatmetbuurten.csv", function(data) {
+
+	dict = {}
 	
 	for (i = 0; i < data.length; i++) { 
 	data[i]['year'] = data[i]['incident_timestamp'].split('/')[0]
 	data[i]['month'] = data[i]['incident_timestamp'].split('/')[1]
+	data[i]['group'] = data[i]['neighborhood_id_ams']+'--'+String(data[i]['year'])+'--'+String(data[i]['month'])
+	
 	}
-	console.log(groupBy(data, 'neighborhood_id_ams'))
-})
+console.log(currentYear,currentMonth,currentCat,currentPrio)
+var data = data.filter(isCorrectYear);
 
+var data = data.filter(isCorrectMonth);
 
-function show(){
-	if (showvar ==0) {
-		
-	d3.select('#nMonth').style('opacity',1)
-	showvar++
+//var data = data.filter(isCorrectPrio);
+//var data = data.filter(isCorrectCategory);
+	for (i = 0; i < data.length; i++) { 
+
+	dict[data[i]['group']] = 0
+	
 	}
-	else{
-	console.log('lol2');
-	d3.select('#month').text('')
-	d3.select('#nMonth').style('opacity',0)
-	showvar--
+	for (i = 0; i < data.length; i++) { 
+
+	dict[data[i]['group']] ++
+	
 	}
-	update()
+	total = 0
+for (var key in dict) {
+
+g.selectAll('path').filter(' .n'+key.split('--')[0]).style('fill', d3.rgb(dict[key]*25,25,25))
+total += dict[key]
 }
-d3.select("#myCheckbox").on("change",show);
+d3.select('#year').text('Year: '+ String(currentYear))
+d3.select('h1').text('Total number of incidents: '+ String(total))
+})
+}
+
 
