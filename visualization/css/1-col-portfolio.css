@@ -34,8 +34,4 @@ div#tooltip {
     pointer-events: none;			
 }
 
-#overlay2 {
-	pointer-events: none;
-}
-
 .page-header { border-bottom:none; }
