@@ -1,0 +1,11 @@
+.text {
+            font-size: 16pt;
+            font-family: Arial;
+        }  
+
+.axis {
+  fill: gray;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+} 
