@@ -13,12 +13,12 @@ var svg = d3.select('#svgContainer').append('svg')
     .attr('width', width)
     .attr('height', height);
 
-var projection = d3.geoMercator()
+var projection = d3.geo.mercator()
     .scale(scale)
     .center(center)
     .translate([width / 2, height / 2]);
 
-var path = d3.geoPath()
+var path = d3.geo.path()
     .projection(projection);
 
 var svg = d3.select('svg')
@@ -26,6 +26,11 @@ var svg = d3.select('svg')
     .attr('height', height);
 
 var g = svg.append('g').attr('id', 'mapLayer')
+
+var compareButton = d3.select('#svgContainer')
+	.append('button').attr('id', 'compare').html('compare')
+var compareActive = d3.select('#svgContainer')
+	.append('input').attr('type', 'checkbox');
 
 d3.json('geojson/adamBuurtenExWater.geojson', function(error, mapData) {
     var features = mapData.features;
@@ -82,7 +87,7 @@ function zoomIn(code) {
 	var sf = 1 / d3.max([bbox.width, bbox.height]) * (150 * (1/mapSF)) //scale factor
 	var centroid = [bbox.x*sf + bbox.width*sf/2, bbox.y*sf + bbox.height*sf/2];
 	
-	//nbh.node().parentNode.appendChild(nbh.node());
+	//element.parentNode.appendChild(element);
 	
 	svg.transition().duration(transDuration)
 		.attr('width', newWidth)

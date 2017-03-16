@@ -23,7 +23,7 @@ var rect = overlay.append('rect')
 	.attr('opacity', 0);
 
 d3.select('.page-header').style('border-bottom', 'none')
-var colorScale = d3.scaleQuantize().domain([0,1])
+var colorScale = d3.scale.quantize().domain([0,1])
       //.interpolate(d3.interpolateRgb)
       .range([d3.rgb("#333"), d3.rgb('#FFF')]);
 	
@@ -36,7 +36,7 @@ var timeDisplay = d3.select('.page-header')
 	.html(initDate.getHours().toString() + ':00'); //- ' + new Date(initDate.valueOf() + h24/12).getHours().toString() + ':00');
 	
 var xPos;
-var drag = d3.drag()
+var drag = d3.behavior.drag()
 	.on('drag', function() {
 		xPos = d3.mouse(this)[0];
 		if (xPos >= 0 && xPos <= width) {
