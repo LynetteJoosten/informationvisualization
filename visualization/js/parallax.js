@@ -21,18 +21,24 @@ var ov2svg = d3.select('#parallaxViz');
 function mouseWheelEvent(e) {
 	var f = 30;
 	var delta = e.detail < 0 || e.wheelDelta > 0 ? 1 : -1;
+	var timeout = setTimeout(function() {
+		pos = 0;
+	}, 1200);
     if (delta < 0) {
-        console.log('down');
-		if (pos * f < window.innerHeight) {
+		if (pos <= 6) {
 			pos += 1;
+		} else if (pos > 6) {
+			ov2svg.transition().duration(1000).style('top', '0px');
+			clearTimeout(timeout);
+			pos = 0;
 		}
-		ov2svg.style('top', -(window.innerHeight - pos * f) + 'px');
     } else {
-        console.log('up');
-		if (pos > 0) {
-			pos -= 1;
+		if (pos <= 6) {
+			pos += 1;
+		} else if (pos > 6) {
+			ov2svg.transition().duration(1000).style('top', -window.innerHeight + 'px');
+			clearTimeout(timeout);
+			pos = 0;
 		}
-		ov2svg.style('top', -(window.innerHeight - pos * f) + 'px');
 	}
-	console.log(pos);
 }
