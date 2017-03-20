@@ -120,7 +120,7 @@ d3.csv("data/flatmetbuurten.csv", function(data) {
 
 	dict[data[i]['group']] ++
 	}
-console.log(dict)
+	console.log(dict)
 })
 
 
